@@ -1,22 +1,23 @@
 const express = require("express");
 const z=require('zod');
+const{User,Account}=require('../db');
+const jwt=require('jsonwebtoken');
 const {JWT_SECRET}=require("../config");
 const { authMiddleware } = require("../midleware");
-const { Account } = require("../db");
 
 const router=express.Router();
 
 const signupSchema=z.object({
-    username: zod.string().email(),
-	firstName: zod.string(),
-	lastName: zod.string(),
-	password: zod.string()
+    username: z.string().email(),
+	firstName: z.string(),
+	lastName: z.string(),
+	password: z.string()
 })
 
-const updateSchema = zod.object({
-	password: zod.string().optional(),
-    firstName: zod.string().optional(),
-    lastName: zod.string().optional(),
+const updateSchema = z.object({
+	password: z.string().optional(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
 })
 
 router.post("/signup",async (req,res)=>{
@@ -46,7 +47,7 @@ const user = await User.create({
 const userId = user._id;
 
 
-const account=await Account.create({
+await Account.create({
 userId:userId,
 balance:10000*Math.random()
 })
@@ -62,7 +63,7 @@ res.json({
 
 })
 
-router.post("/signup",async(req,res)=>{
+router.post("/signin",async(req,res)=>{
     const { success } = signinBody.safeParse(req.body)
     if (!success) {
         return res.status(411).json({
@@ -74,12 +75,11 @@ router.post("/signup",async(req,res)=>{
         username: req.body.username,
         password: req.body.password
     })
-    if(existingUser){
+    if(user){
         const token=jwt.sign({
-            userId
+            userId:user._id
         }, JWT_SECRET);
         res.json({
-            message: "User signedIn successfully",
             token: token
         })
         return;
@@ -91,7 +91,7 @@ router.post("/signup",async(req,res)=>{
     
 })
 
-router.put('/user',authMiddleware, async(req,res)=>{
+router.put('/',authMiddleware, async(req,res)=>{
 const  {success}=updateSchema.safeParse(req.body);
 if (!success) {
     res.status(411).json({
@@ -129,4 +129,4 @@ router.get("/bulk",authMiddleware,async(req,res)=>{
     })
 })
 
-module.exports=router;
+module.exports = router;
