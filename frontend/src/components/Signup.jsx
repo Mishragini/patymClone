@@ -1,6 +1,13 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
+import { useState } from "react";
+import axios from 'axios';
 
 export default function Signup() {
+  const[firstName,setFirstName]=useState("");
+  const[lastName,setLastName]=useState("");
+  const[username,setUsername]=useState("");
+  const[password,setPassword]=useState("");
+
   const navigate = useNavigate();
 
   return (
@@ -13,7 +20,9 @@ export default function Signup() {
 
       <div className="mb-4">
         <h3 className="text-sm font-semibold">First Name</h3>
-        <input
+        <input onChange={(e)=>{
+          setFirstName(e.target.value)
+        }}
           className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
           type="text"
           placeholder="John"
@@ -22,7 +31,9 @@ export default function Signup() {
 
       <div className="mb-4">
         <h3 className="text-sm font-semibold">Last Name</h3>
-        <input
+        <input  onChange={(e)=>{
+          setLastName(e.target.value)
+        }}
           className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
           type="text"
           placeholder="Doe"
@@ -31,7 +42,9 @@ export default function Signup() {
 
       <div className="mb-4">
         <h3 className="text-sm font-semibold">Email</h3>
-        <input
+        <input  onChange={(e)=>{
+          setUsername(e.target.value)
+        }}
           className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
           type="email"
           placeholder="johndoe@example.com"
@@ -40,7 +53,9 @@ export default function Signup() {
 
       <div className="mb-4">
         <h3 className="text-sm font-semibold">Password</h3>
-        <input
+        <input onChange={(e)=>{
+          setPassword(e.target.value)
+        }}
           className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
           type="password"
         />
@@ -48,7 +63,15 @@ export default function Signup() {
 
       <button
         className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:shadow-outline-gray"
-        onClick={() => {
+        onClick={async () => {
+          const postData={
+            firstName,
+            lastName,
+            username,
+            password
+          }
+          const response=await axios.post("http://localhost:3000/api/v1/user/signup",postData);
+          window.localStorage.setItem("Authorization","Bearer "+response.data.token)
           navigate("/dashboard");
         }}
       >

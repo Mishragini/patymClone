@@ -54,7 +54,7 @@ const userId = user._id;
 
 await Account.create({
 userId:userId,
-balance:10000*Math.random()
+balance:(10000 * Math.random()).toFixed(2)
 })
 
 const token = jwt.sign({
@@ -132,6 +132,12 @@ router.get("/bulk",authMiddleware,async(req,res)=>{
             _id:user._id
         }))
     })
+})
+
+router.get('/currentUser',authMiddleware,async(req,res)=>{
+    const userId=req.userId;
+    const user= await User.findOne({_id:userId});
+    return res.json({firstName:user.firstName});
 })
 
 module.exports = router;

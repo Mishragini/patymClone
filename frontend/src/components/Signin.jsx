@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom";
-
+import { useState } from "react";
+import axios from "axios";
 export default function Signin() {
   const navigate = useNavigate();
+  const[username,setUsername]=useState("");
+  const[password,setPassword]=useState("");
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-md shadow-md ">
@@ -13,16 +16,20 @@ export default function Signin() {
 
       <div className="mb-4">
         <h3 className="text-sm font-semibold">Email</h3>
-        <input
+        <input  onChange={(e)=>{
+          setUsername(e.target.value)
+        }}
           className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
           type="text"
-          placeholder="John"
+          placeholder="john@example.com"
         />
       </div>
 
       <div className="mb-4">
         <h3 className="text-sm font-semibold">Password</h3>
-        <input
+        <input  onChange={(e)=>{
+          setPassword(e.target.value)
+        }}
           className="w-full p-2 border rounded-md focus:outline-none focus:border-blue-500"
           type="password"
         />
@@ -30,7 +37,13 @@ export default function Signin() {
 
       <button
         className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:shadow-outline-gray"
-        onClick={() => {
+        onClick={async () => {
+          const postData={
+            username,
+            password
+          }
+          const response=await axios.post("http://localhost:3000/api/v1/user/signin",postData);
+          window.localStorage.setItem("Authorization","Bearer "+response.data.token)
           navigate("/dashboard");
         }}
       >
@@ -38,7 +51,7 @@ export default function Signin() {
       </button>
       <div className="flex flex-col items-center">
       <p className="mt-4 text-sm text-gray-600">
-        Don't have an account? <a href="/login" className="text-black">Login</a>
+        Don't have an account? <a href="/signup" className="text-black">Signup</a>
       </p>
       </div>
     </div>
