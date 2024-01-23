@@ -3,7 +3,7 @@ const z=require('zod');
 const{User,Account}=require('../db');
 const jwt=require('jsonwebtoken');
 const {JWT_SECRET}=require("../config");
-const { authMiddleware } = require("../midleware");
+const  authMiddleware  = require("../midleware");
 
 const router=express.Router();
 
@@ -11,6 +11,11 @@ const signupSchema=z.object({
     username: z.string().email(),
 	firstName: z.string(),
 	lastName: z.string(),
+	password: z.string()
+})
+
+const signinSchema=z.object({
+    username: z.string().email(),
 	password: z.string()
 })
 
@@ -64,7 +69,7 @@ res.json({
 })
 
 router.post("/signin",async(req,res)=>{
-    const { success } = signinBody.safeParse(req.body)
+    const { success } = signinSchema.safeParse(req.body)
     if (!success) {
         return res.status(411).json({
             message: "Incorrect inputs"
@@ -98,9 +103,9 @@ if (!success) {
         message: "Error while updating information"
     })
 }
-await User.updateOne(req.body,{
-    id:req.userId
-})
+await User.updateOne({
+    _id:req.userId
+},req.body )
 res.json({
     message: "Updated successfully"
 })
