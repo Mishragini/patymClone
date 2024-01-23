@@ -13,9 +13,12 @@ const account=await Account.findOne({
 })
 
 router.post('/transfer',authMiddleware,async(req,res)=>{
+    const{to,amount}=req.body;
+    console.log(req.body);
+    console.log(to);
+
     const session=await mongoose.startSession();
     session.startTransaction();
-    const{to,amount}=req.body;
 
 
     const senderAccount = await Account.findOne({ userId: req.userId }).session(session);
@@ -28,7 +31,7 @@ router.post('/transfer',authMiddleware,async(req,res)=>{
     }
 
 
-    const recipientAccount= await Account.findOne({userId:to}).session(session);
+    const recipientAccount= await Account.findOne({username:to}).session(session);
     if(!recipientAccount){
         await session.abortTransaction();
         return res.status(400).json({
@@ -38,7 +41,7 @@ router.post('/transfer',authMiddleware,async(req,res)=>{
     }
 
     await Account.updateOne({ userId: req.userId }, { $inc: { balance: -amount } }).session(session);
-    await Account.updateOne({ userId: to }, { $inc: { balance: amount } }).session(session);
+    await Account.updateOne({ userId: recipientAccount._id }, { $inc: { balance: amount } }).session(session);
 
     await session.commitTransaction();
 
