@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 export default function SendMoney(props){
+  const navigate=useNavigate();
   const authHeader=window.localStorage.getItem("Authorization");
   const headers={
     'Authorization':authHeader
@@ -40,7 +42,7 @@ export default function SendMoney(props){
         className="w-full bg-green-600 text-white p-2 rounded-md hover:bg-green-400 focus:outline-none focus:shadow-outline-gray"
         onClick={async () => {
           const response=await axios.post("http://localhost:3000/api/v1/account/transfer",body,{headers})
-          alert("transaction done!");
+          navigate('/confirmation');
         }}
       >
         Initiate Transfer

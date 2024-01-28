@@ -3,6 +3,7 @@ import Signup from "./components/Signup"
 import Signin from "./components/Signin"
 import Dashboard from "./components/Dashboard"
 import Landing from "./components/Landing"
+import Confirmation from "./components/Confirmation"
 function App() {
 
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/signup" element={<Signup/>}/>
         <Route path="/signin" element={<Signin/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
+        <Route path='/confirmation' element={<Confirmation />}/>
       </Routes>
     </BrowserRouter>
   )
